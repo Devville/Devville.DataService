@@ -43,6 +43,7 @@
       <HintPath>..\packages\Devville.Helpers.1.3\lib\Devville.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -56,6 +57,8 @@
     <Compile Include="GetListItems.cs" />
     <Compile Include="GetListItemsPaged.cs" />
     <Compile Include="GetListItemsPartitioned.cs" />
+    <Compile Include="GetTaxonomyTerms.cs" />
+    <Compile Include="Model\TaxonomyTerm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

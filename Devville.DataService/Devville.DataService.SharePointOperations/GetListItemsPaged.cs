@@ -64,7 +64,7 @@ namespace Devville.DataService.SharePointOperations
         {
             get
             {
-                return "SharePoint.GetListItemsPaged";
+                return "GetSPListItemsPaged";
             }
         }
 
