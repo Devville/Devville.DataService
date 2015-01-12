@@ -10,6 +10,7 @@ namespace Devville.DataService
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Principal;
     using System.Web;
 
     using Devville.DataService.Contracts;
@@ -41,7 +42,7 @@ namespace Devville.DataService
                             .Where(serviceOperationInterface.IsAssignableFrom))
                     .ToList();
             Dictionary<Type, IServiceOperation> serviceOperations = serviceOperationTypes.ToDictionary(
-                t => t,
+                t => t, 
                 t => (IServiceOperation)Activator.CreateInstance(t));
 
             ServiceOperations = serviceOperations;
@@ -86,10 +87,17 @@ namespace Devville.DataService
         /// <created>1/12/2015</created>
         public static IEnumerable<Assembly> LoadBinAssemblies()
         {
+            var assemblies = new List<Assembly>();
+
+            WindowsImpersonationContext impersonationContext = WindowsIdentity.Impersonate(IntPtr.Zero);
+
             string binPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
             string[] dlls = Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories);
 
-            return dlls.Select(Assembly.LoadFile);
+            assemblies.AddRange(dlls.Select(Assembly.LoadFile));
+            impersonationContext.Undo();
+
+            return assemblies;
         }
 
         /// <summary>
@@ -117,9 +125,9 @@ namespace Devville.DataService
                             o =>
                             new
                                 {
-                                    o.Value.Name,
-                                    Class = o.Key.FullName,
-                                    Assembly = o.Key.Assembly.FullName,
+                                    o.Value.Name, 
+                                    Class = o.Key.FullName, 
+                                    Assembly = o.Key.Assembly.FullName, 
                                     OperationUrl = string.Format("{0}?op={1}", context.Request.Url, o.Value.Name)
                                 });
 
