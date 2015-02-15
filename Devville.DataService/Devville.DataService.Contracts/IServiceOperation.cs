@@ -5,6 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Devville.DataService.Contracts
 {
+    using System;
+    using System.Collections.Generic;
     using System.Web;
 
     /// <summary>
@@ -23,7 +25,17 @@ namespace Devville.DataService.Contracts
         /// </value>
         string Name { get; }
 
-        #endregion
+        ///// <summary>
+        ///// Gets the parameters.
+        ///// </summary>
+        ///// <value>
+        ///// The parameters.
+        ///// </value>
+        ///// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
+        ///// <created>1/13/2015</created>
+        //Dictionary<string, Type> Parameters { get; }
+
+            #endregion
 
         #region Public Methods and Operators
 

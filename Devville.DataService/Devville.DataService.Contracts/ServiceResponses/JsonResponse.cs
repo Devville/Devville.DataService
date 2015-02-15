@@ -34,107 +34,41 @@ namespace Devville.DataService.Contracts.ServiceResponses
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResponse"/> class.
+        /// Initializes a new instance of the <see cref="JsonResponse" /> class.
         /// </summary>
-        /// <param name="templatePath">
-        /// The template path.
-        /// </param>
-        /// <param name="templateId">
-        /// The template identifier.
-        /// </param>
-        /// <param name="containerId">
-        /// The container identifier.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <param name="model">The model.</param>
+        /// <param name="status">The status.</param>
+        /// <author>
+        /// Ahmed Magdy (ahmed.magdy@devville.net)
+        /// </author>
         /// <created>1/12/2015</created>
         public JsonResponse(
-            string templatePath,
-            string templateId,
-            string containerId,
             object model,
             JsonResponseStatus status)
         {
-            this.TemplateId = templateId;
-            this.TemplatePath = templatePath;
-            this.ContainerId = containerId;
+
             this.Model = model;
             this.ServiceStatus = status;
             this.Extras = new Dictionary<string, object>();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResponse"/> class.
+        /// Initializes a new instance of the <see cref="JsonResponse" /> class.
         /// </summary>
-        /// <param name="templatePath">
-        /// The template path.
-        /// </param>
-        /// <param name="templateId">
-        /// The template identifier.
-        /// </param>
-        /// <param name="containerId">
-        /// The container identifier.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>1/12/2015</created>
-        public JsonResponse(string templatePath, string templateId, string containerId, object model)
-            : this(templatePath, templateId, containerId, model, new JsonResponseStatus(JsonOperationStatus.Succeeded))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResponse"/> class.
-        /// </summary>
-        /// <param name="templateId">
-        /// The template identifier.
-        /// </param>
-        /// <param name="containerId">
-        /// The container identifier.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>1/12/2015</created>
-        public JsonResponse(string templateId, string containerId, object model)
-            : this(null, templateId, containerId, model, new JsonResponseStatus(JsonOperationStatus.Succeeded))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResponse"/> class.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <param name="model">The model.</param>
+        /// <author>
+        /// Ahmed Magdy (ahmed.magdy@devville.net)
+        /// </author>
         /// <created>1/12/2015</created>
         public JsonResponse(object model)
-            : this(null, null, model)
+            : this(model, new JsonResponseStatus(JsonOperationStatus.Succeeded))
         {
         }
+
 
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        ///     Gets or sets the container identifier.
-        /// </summary>
-        /// <value>
-        ///     The container identifier.
-        /// </value>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>1/12/2015</created>
-        public string ContainerId { get; set; }
 
         /// <summary>
         ///     Gets the type of the content.
@@ -183,26 +117,6 @@ namespace Devville.DataService.Contracts.ServiceResponses
         /// <created>12/10/2014</created>
         public JsonResponseStatus ServiceStatus { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the template identifier.
-        /// </summary>
-        /// <value>
-        ///     The template identifier.
-        /// </value>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>1/12/2015</created>
-        public string TemplateId { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the template path.
-        /// </summary>
-        /// <value>
-        ///     The template path.
-        /// </value>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>12/28/2014</created>
-        public string TemplatePath { get; set; }
-
         #endregion
 
         #region Public Methods and Operators
@@ -242,40 +156,17 @@ namespace Devville.DataService.Contracts.ServiceResponses
             }
             else
             {
-                string templatePath = context.Request.QueryString["TemplatePath"];
-                if (!string.IsNullOrWhiteSpace(templatePath))
+                IEnumerable<string> queryStringKeys = context.Request.QueryString.AllKeys.Where(q => !string.IsNullOrWhiteSpace(q));
+                foreach (string queryStringKey in queryStringKeys)
                 {
-                    this.TemplatePath = templatePath;
-                }
-
-                string templateId = context.Request.QueryString["TemplateId"];
-                if (!string.IsNullOrWhiteSpace(templateId))
-                {
-                    this.TemplateId = templateId;
-                }
-
-                string containerId = context.Request.QueryString["ContainerId"];
-                if (!string.IsNullOrWhiteSpace(containerId))
-                {
-                    this.ContainerId = containerId;
-                }
-
-                IEnumerable<string> extraQueryStringNames =
-                    context.Request.QueryString.AllKeys.Where(
-                        q =>
-                        !string.IsNullOrWhiteSpace(q)
-                        && q.StartsWith(ExtrasPrefix, StringComparison.InvariantCultureIgnoreCase));
-                foreach (string extraQueryStringName in extraQueryStringNames)
-                {
-                    string extraKey = extraQueryStringName.Replace(ExtrasPrefix, string.Empty);
+                    string extraKey = queryStringKey.Replace(ExtrasPrefix, string.Empty);
                     if (this.Extras.ContainsKey(extraKey))
                     {
                         extraKey = extraKey + "_";
                     }
 
-                    this.Extras.Add(extraKey, context.Request[extraQueryStringName]);
+                    this.Extras.Add(extraKey, context.Request[queryStringKey]);
                 }
-
 
                 response = JsonConvert.SerializeObject(this, serializerSettings);
             }

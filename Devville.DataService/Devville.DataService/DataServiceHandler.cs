@@ -17,7 +17,8 @@ namespace Devville.DataService
     using Devville.DataService.Contracts.ServiceResponses;
 
     /// <summary>
-    ///     The data service handler.
+    /// The data service handler.
+    /// Source code and more: https://github.com/Devville/Devville.DataService
     /// </summary>
     public class DataServiceHandler : IHttpHandler
     {
@@ -42,7 +43,7 @@ namespace Devville.DataService
                             .Where(serviceOperationInterface.IsAssignableFrom))
                     .ToList();
             Dictionary<Type, IServiceOperation> serviceOperations = serviceOperationTypes.ToDictionary(
-                t => t, 
+                t => t,
                 t => (IServiceOperation)Activator.CreateInstance(t));
 
             ServiceOperations = serviceOperations;
@@ -125,9 +126,9 @@ namespace Devville.DataService
                             o =>
                             new
                                 {
-                                    o.Value.Name, 
-                                    Class = o.Key.FullName, 
-                                    Assembly = o.Key.Assembly.FullName, 
+                                    o.Value.Name,
+                                    Class = o.Key.FullName,
+                                    Assembly = o.Key.Assembly.FullName,
                                     OperationUrl = string.Format("{0}?op={1}", context.Request.Url, o.Value.Name)
                                 });
 
@@ -151,7 +152,7 @@ namespace Devville.DataService
             catch (Exception exception)
             {
                 var responseStatus = new JsonResponseStatus(JsonOperationStatus.Failed, exception.ToString());
-                var exceptionResponse = new JsonResponse(null, null, null, null, responseStatus);
+                var exceptionResponse = new JsonResponse(null, responseStatus);
                 exceptionResponse.Render(context);
             }
         }

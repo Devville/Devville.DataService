@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devville.DataService.ShareP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devville.DataService.Web", "Devville.DataService.Web\Devville.DataService.Web.csproj", "{077C7862-AA61-49E4-BA27-EE2F406D2775}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{55FDA38D-01B8-4AAD-B729-644E6B98A86D}"
+	ProjectSection(SolutionItems) = preProject
+		Common\AssemblyCommon.cs = Common\AssemblyCommon.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
