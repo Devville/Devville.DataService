@@ -7,7 +7,6 @@
 namespace Devville.DataService.SharePointOperations
 {
     using System;
-    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Web;
@@ -23,6 +22,44 @@ namespace Devville.DataService.SharePointOperations
     /// <created>12/28/2014</created>
     public class GetListItemsPaged : IServiceOperation
     {
+        #region Public Methods and Operators
+
+        /// <summary>
+        ///     Executes the current service operation.
+        /// </summary>
+        /// <param name="context">
+        ///     The context.
+        /// </param>
+        /// <returns>
+        ///     The Service Response
+        /// </returns>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>12/28/2014</created>
+        public IServiceResponse Execute(HttpContext context)
+        {
+            var data = Common.GetListItemsByViewAsDataTable(context);
+            var pageIndex = context.Request[PageIndexKey].To(0);
+            var pageSize = context.Request[PageSizeKey].To(8);
+            var totalCount = data.Rows.Count;
+
+            // if the user provided pageIndex which higher of the currect one then set its value to the last page index.
+            var lastPageIndex = (int)(Math.Ceiling((double)totalCount / pageSize) - 1);
+
+            pageIndex = lastPageIndex >= pageIndex ? pageIndex : lastPageIndex;
+
+            var pagedData = data.AsEnumerable().Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            var pagedResults = pagedData.Any() ? pagedData.CopyToDataTable() : new DataTable();
+
+            var response = new JsonResponse(new { Items = pagedResults });
+            response.Extras[PageIndexKey] = pageIndex;
+            response.Extras[PageSizeKey] = pageSize;
+            response.Extras[TotalCountKey] = data.Rows.Count;
+
+            return response;
+        }
+
+        #endregion
+
         #region Constants
 
         /// <summary>
@@ -68,42 +105,21 @@ namespace Devville.DataService.SharePointOperations
             }
         }
 
-        #endregion
-
-        #region Public Methods and Operators
-
         /// <summary>
-        /// Executes the current service operation.
+        ///     Gets the description.
         /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <returns>
-        /// The Service Response
-        /// </returns>
+        /// <value>
+        ///     The description.
+        /// </value>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>12/28/2014</created>
-        public IServiceResponse Execute(HttpContext context)
+        /// <created>2/23/2015</created>
+        public string Description
         {
-            DataTable data = Common.GetListItemsByViewAsDataTable(context);
-            int pageIndex = context.Request[PageIndexKey].To(0);
-            int pageSize = context.Request[PageSizeKey].To(8);
-            int totalCount = data.Rows.Count;
-
-            // if the user provided pageIndex which higher of the currect one then set its value to the last page index.
-            var lastPageIndex = (int)(Math.Ceiling((double)totalCount / pageSize) - 1);
-
-            pageIndex = lastPageIndex >= pageIndex ? pageIndex : lastPageIndex;
-
-            List<DataRow> pagedData = data.AsEnumerable().Skip(pageIndex * pageSize).Take(pageSize).ToList();
-            DataTable pagedResults = pagedData.Any() ? pagedData.CopyToDataTable() : new DataTable();
-
-            var response = new JsonResponse(new { Items = pagedResults });
-            response.Extras[PageIndexKey] = pageIndex;
-            response.Extras[PageSizeKey] = pageSize;
-            response.Extras[TotalCountKey] = data.Rows.Count;
-
-            return response;
+            get
+            {
+                return
+                    "Gets SharePoint ListItems Paged with TotalItemCount, it's useful if you want to build pager with number. Parameters are: 'SiteUrl', 'ListUrl', 'ViewName', 'PageSize' and 'PageIndex'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura." + Constants.OperationDescription;
+            }
         }
 
         #endregion

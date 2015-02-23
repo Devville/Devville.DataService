@@ -39,6 +39,23 @@ namespace Devville.DataService.SharePointOperations
             }
         }
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        public string Description
+        {
+            get
+            {
+                return
+                    "Gets SharePoint ListItems in grouped in partitions like two by two. Parameters are: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura." + Constants.OperationDescription;
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators

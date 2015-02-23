@@ -11,7 +11,9 @@ namespace Devville.DataService.Web
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            var s = Request.Url;
 
+            var d = string.Format("{0}://{1}{2}", s.Scheme, s.Authority, s.PathAndQuery);
         }
     }
 }

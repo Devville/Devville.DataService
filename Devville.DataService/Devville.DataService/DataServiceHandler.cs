@@ -127,6 +127,7 @@ namespace Devville.DataService
                             new
                                 {
                                     o.Value.Name,
+                                    o.Value.Description,
                                     Class = o.Key.FullName,
                                     Assembly = o.Key.Assembly.FullName,
                                     OperationUrl = string.Format("{0}?op={1}", context.Request.Url, o.Value.Name)
@@ -147,7 +148,9 @@ namespace Devville.DataService
                 }
 
                 // Always execute the first one if there are any duplicates.
-                operations.First().Value.Execute(context).Render(context);
+                var service = operations.First().Value;
+                var serviceResponse = service.Execute(context);
+                serviceResponse.Render(context);
             }
             catch (Exception exception)
             {

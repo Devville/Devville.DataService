@@ -40,7 +40,7 @@ devville.helpers = {
         return string.indexOf(prefix) === 0;
     },
     contains: function (string, it) {
-        return string.indexOf(it) != -1;
+        return string.indexOf(it) !== -1;
     },
     addQueryStringToUrl: function (url, name, value) {
         if (this.contains(url, "?")) {
@@ -77,11 +77,11 @@ devville.dataService.prototype.render = function (data, callback) {
     var getTemplate = function (response, templateId) {
         try {
             var $response = $(response);
-            var template = $response.filter('#' + templateId);
+            var template = $response.filter("#" + templateId);
             return template;
         } catch (e) {
             self.log(e);
-            return $('<div/>');
+            return $("<div/>");
         }
     };
 
@@ -89,8 +89,8 @@ devville.dataService.prototype.render = function (data, callback) {
     var renderTemplate = function (templatesResponse, serviceResponse) {
         var template = getTemplate(templatesResponse, serviceResponse.extras.templateId);
         var renderedHtml = $.templates(template.html()).render(serviceResponse);
-        $('#' + serviceResponse.extras.containerId).html(renderedHtml);
-        if (callback !== undefined && typeof (callback) == 'function') {
+        $("#" + serviceResponse.extras.containerId).html(renderedHtml);
+        if (callback !== undefined && typeof (callback) == "function") {
             callback(serviceResponse);
         }
     };
@@ -104,16 +104,16 @@ devville.dataService.prototype.run = function (data, callback) {
 
     var execFunction = function (fileResponse, serviceResponse) {
         self.templatesHtml = fileResponse;
-        if (callback !== undefined && typeof (callback) == 'function') {
+        if (callback !== undefined && typeof (callback) == "function") {
             callback(self.templatesHtml, serviceResponse);
         }
     };
     var execute = function (serviceResponse) {
 
-        var file = serviceResponse.templatePath == undefined || serviceResponse.templatePath == "" || serviceResponse.templatePath == null
+        var file = serviceResponse.templatePath == undefined || serviceResponse.templatePath === "" || serviceResponse.templatePath == null
             ? self.templatesUrl
             : serviceResponse.templatePath;
-        if (file == "" || file == null) {
+        if (file === "" || file == null) {
             self.templatesHtml = $("body");
         }
 

@@ -41,6 +41,23 @@ namespace Devville.DataService.SharePointOperations
             }
         }
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        public string Description
+        {
+            get
+            {
+                return
+                    "Get the SharePoint terms (taxonomy) in a tree format." + Constants.OperationDescription;
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -108,7 +125,7 @@ namespace Devville.DataService.SharePointOperations
         /// </summary>
         /// <param name="terms">The terms.</param>
         /// <returns>The terms tree.</returns>
-        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
         /// <created>1/12/2015</created>
         private List<TaxonomyTerm> BuildTermsTree(TermCollection terms)
         {

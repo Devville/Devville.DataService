@@ -57,8 +57,10 @@
       <Link>Properties\AssemblyCommon.cs</Link>
     </Compile>
     <Compile Include="Common.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="GetListItems.cs" />
     <Compile Include="GetListItemsPaged.cs" />
+    <Compile Include="GetListItemsPaged2.cs" />
     <Compile Include="GetListItemsPartitioned.cs" />
     <Compile Include="GetTaxonomyTerms.cs" />
     <Compile Include="Model\TaxonomyTerm.cs" />

@@ -25,15 +25,15 @@ namespace Devville.DataService.Contracts
         /// </value>
         string Name { get; }
 
-        ///// <summary>
-        ///// Gets the parameters.
-        ///// </summary>
-        ///// <value>
-        ///// The parameters.
-        ///// </value>
-        ///// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
-        ///// <created>1/13/2015</created>
-        //Dictionary<string, Type> Parameters { get; }
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        string Description { get;  }
 
             #endregion
 

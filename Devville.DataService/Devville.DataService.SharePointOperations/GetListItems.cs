@@ -36,21 +36,22 @@ namespace Devville.DataService.SharePointOperations
         }
 
         /// <summary>
-        ///     Gets a value indicating whether [write model only].
+        /// Gets the description.
         /// </summary>
         /// <value>
-        ///     <c>true</c> if [write model only]; otherwise, <c>false</c>.
+        /// The description.
         /// </value>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>1/4/2015</created>
-        /// <created>1/4/2015</created>
-        public bool WriteModelOnly
+        /// <created>2/23/2015</created>
+        /// <created>2/23/2015</created>
+        public string Description
         {
             get
             {
-                return false;
+                return "Gets SharePoint ListItems by: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura." + Constants.OperationDescription;
             }
         }
+
 
         #endregion
 
