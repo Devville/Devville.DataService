@@ -123,8 +123,7 @@ namespace Devville.DataService.SharePointOperations
                                                           DateTimeFormat =
                                                               {
                                                                   Calendar =
-                                                                      new UmAlQuraCalendar
-                                                                      ()
+                                                                      new UmAlQuraCalendar()
                                                               }
                                                       };
                             row[dateTimeColumn.UmAlQuraName] = date.ToString(dateFormat, umalQuraCulture);
@@ -136,6 +135,23 @@ namespace Devville.DataService.SharePointOperations
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Gets the site URL.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <returns>
+        /// The site url from the current url without any query string
+        /// </returns>
+        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
+        /// <created>3/17/2015</created>
+        public static string GetSiteUrl(HttpContext context)
+        {
+            Uri url = context.Request.Url;
+            return string.Format("{0}://{1}{2}", url.Scheme, url.Authority, url.AbsolutePath);
         }
 
         #endregion
