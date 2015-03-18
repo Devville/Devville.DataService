@@ -7,7 +7,6 @@ namespace Devville.DataService
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -17,25 +16,12 @@ namespace Devville.DataService
     using Devville.DataService.Contracts;
     using Devville.DataService.Contracts.ServiceResponses;
 
-    using NLog;
-
     /// <summary>
-    ///     The data service handler.
-    ///     Source code and more: https://github.com/Devville/Devville.DataService
+    /// The data service handler.
+    /// Source code and more: https://github.com/Devville/Devville.DataService
     /// </summary>
     public class DataServiceHandler : IHttpHandler
     {
-        #region Static Fields
-
-        /// <summary>
-        ///     The logger
-        /// </summary>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>3/12/2015</created>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        #endregion
-
         #region Constructors and Destructors
 
         /// <summary>
@@ -46,55 +32,21 @@ namespace Devville.DataService
         /// <created>12/28/2014</created>
         static DataServiceHandler()
         {
-            try
-            {
-                Type serviceOperationInterface = typeof(IServiceOperation);
+            Type serviceOperationInterface = typeof(IServiceOperation);
 
-                IEnumerable<Assembly> loadedAssemblied = LoadBinAssemblies();
+            List<Type> serviceOperationTypes =
+                LoadBinAssemblies()
+                    .SelectMany(
+                        assembly =>
+                        assembly.GetTypes()
+                            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition && !t.IsInterface)
+                            .Where(serviceOperationInterface.IsAssignableFrom))
+                    .ToList();
+            Dictionary<Type, IServiceOperation> serviceOperations = serviceOperationTypes.ToDictionary(
+                t => t,
+                t => (IServiceOperation)Activator.CreateInstance(t));
 
-                ServiceOperations = new Dictionary<Type, IServiceOperation>();
-
-                foreach (Assembly loadedAssembly in loadedAssemblied)
-                {
-                    Type[] publicTypes = loadedAssembly.GetExportedTypes();
-                    Logger.Trace(
-                        "Assembly '{0}' has {1} public types", 
-                        loadedAssembly.GetName().Name, 
-                        publicTypes.Length);
-                    foreach (Type publicType in publicTypes)
-                    {
-                        if (!publicType.IsClass || publicType.IsAbstract || publicType.IsGenericTypeDefinition
-                            || publicType.IsInterface)
-                        {
-                            continue;
-                        }
-
-                        if (!serviceOperationInterface.IsAssignableFrom(publicType))
-                        {
-                            continue;
-                        }
-
-                        var instance = (IServiceOperation)Activator.CreateInstance(publicType);
-                        ServiceOperations.Add(publicType, instance);
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Fatal("Can't load assemblies", exception);
-                var loadException = exception as ReflectionTypeLoadException;
-                if (loadException == null)
-                {
-                    throw;
-                }
-
-                foreach (Exception loaderException in loadException.LoaderExceptions)
-                {
-                    Logger.Fatal("Loader exception: " + loaderException.Message, loaderException);
-                }
-
-                throw loadException.LoaderExceptions.First();
-            }
+            ServiceOperations = serviceOperations;
         }
 
         #endregion
@@ -143,20 +95,8 @@ namespace Devville.DataService
             string binPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
             string[] dlls = Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories);
 
-            foreach (string dll in dlls)
-            {
-                Logger.Trace("Assembly: {0}", dll);
-                Assembly assmbly = Assembly.LoadFile(dll);
-                if (assmbly != null)
-                {
-                    Logger.Trace("Assembly {0} loaded", assmbly.FullName);
-                    assemblies.Add(assmbly);
-                }
-            }
-
+            assemblies.AddRange(dlls.Select(Assembly.LoadFile));
             impersonationContext.Undo();
-
-            Logger.Trace("Total number of loaded assembies are: {0}", assemblies.Count);
 
             return assemblies;
         }
@@ -186,10 +126,10 @@ namespace Devville.DataService
                             o =>
                             new
                                 {
-                                    o.Value.Name, 
-                                    o.Value.Description, 
-                                    Class = o.Key.FullName, 
-                                    Assembly = o.Key.Assembly.FullName, 
+                                    o.Value.Name,
+                                    o.Value.Description,
+                                    Class = o.Key.FullName,
+                                    Assembly = o.Key.Assembly.FullName,
                                     OperationUrl = string.Format("{0}?op={1}", context.Request.Url, o.Value.Name)
                                 });
 
@@ -208,14 +148,12 @@ namespace Devville.DataService
                 }
 
                 // Always execute the first one if there are any duplicates.
-                IServiceOperation service = operations.First().Value;
-                IServiceResponse serviceResponse = service.Execute(context);
+                var service = operations.First().Value;
+                var serviceResponse = service.Execute(context);
                 serviceResponse.Render(context);
             }
             catch (Exception exception)
             {
-                exception.Data["TimeStamp"] = DateTime.Now.ToString("O");
-                Logger.Fatal("Unexpected error: " + exception.Message, exception);
                 var responseStatus = new JsonResponseStatus(JsonOperationStatus.Failed, exception.ToString());
                 var exceptionResponse = new JsonResponse(null, responseStatus);
                 exceptionResponse.Render(context);
