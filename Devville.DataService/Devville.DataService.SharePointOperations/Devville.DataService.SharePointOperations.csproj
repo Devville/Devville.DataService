@@ -73,15 +73,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Devville.DataService.Contracts\Devville.DataService.Contracts.csproj">
+      <Project>{044b2574-eaa3-46d4-a57a-4540f546a2b2}</Project>
+      <Name>Devville.DataService.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\Key.snk" />
     <None Include="Settings.StyleCop" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Devville.DataService\Devville.DataService.csproj">
-      <Project>{463b6ae2-7d1e-4c0f-9155-e36343be29ed}</Project>
-      <Name>Devville.DataService</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

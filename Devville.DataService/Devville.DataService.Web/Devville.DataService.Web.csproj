@@ -73,12 +73,6 @@
     <Content Include="Scripts\devville.dataService.min.js.map">
       <DependentUpon>devville.dataService.min.js</DependentUpon>
     </Content>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\devville.dataService.js" />
     <Content Include="Scripts\devville.dataService.min.js">
@@ -108,9 +102,12 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HelloWorldOperation.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Devville.DataService.Contracts\Devville.DataService.Contracts.csproj">
+      <Project>{044b2574-eaa3-46d4-a57a-4540f546a2b2}</Project>
+      <Name>Devville.DataService.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Devville.DataService.SharePointOperations\Devville.DataService.SharePointOperations.csproj">
       <Project>{1625fcea-8823-4ac7-a515-159e33af726c}</Project>
       <Name>Devville.DataService.SharePointOperations</Name>

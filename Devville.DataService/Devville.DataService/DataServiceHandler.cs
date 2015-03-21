@@ -8,7 +8,6 @@ namespace Devville.DataService
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Configuration;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -35,13 +34,6 @@ namespace Devville.DataService
         /// <created>3/12/2015</created>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        /// <summary>
-        ///     The operations meta data
-        /// </summary>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>3/18/2015</created>
-        private static readonly List<OperationMetaData> OperationsMetaData = new List<OperationMetaData>();
-
         #endregion
 
         #region Constructors and Destructors
@@ -57,60 +49,57 @@ namespace Devville.DataService
             try
             {
                 Type serviceOperationInterface = typeof(IServiceOperation);
+
+                var loadedAssemblied = new List<Assembly>();
+
                 WindowsImpersonationContext impersonationContext = WindowsIdentity.Impersonate(IntPtr.Zero);
 
                 string binPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+                string[] dlls = Directory.GetFiles(binPath, "*.dll", SearchOption.AllDirectories);
 
-                var dllPaths = new List<string>();
-
-                string search = ConfigurationManager.AppSettings["Devville.DataService:DllsPatterns"] ?? "*.dll";
-
-                dllPaths.AddRange(Directory.GetFiles(binPath, search, SearchOption.AllDirectories));
-                AppDomain appDomain = AppDomain.CreateDomain("DevvilleDataServiceLoader");
-
-                foreach (string dll in dllPaths.Distinct())
+                foreach (string dll in dlls)
                 {
                     Logger.Trace("Assembly: {0}", dll);
-
-                    if (!dll.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) || !File.Exists(dll))
+                    Assembly assmbly = Assembly.LoadFile(dll);
+                    if (assmbly == null)
                     {
                         continue;
                     }
 
-                    byte[] fileBytes = File.ReadAllBytes(dll);
-
-                    Assembly loadedAssembly = Assembly.Load(fileBytes);
-
-                    if (loadedAssembly == null)
-                    {
-                        continue;
-                    }
-
-                    Logger.Trace("Assembly {0} loaded", loadedAssembly.FullName);
-
-                    var serviceOperationTypes =
-                        loadedAssembly.GetExportedTypes()
-                            .Where(t => t.IsClass && !t.IsAbstract && !t.IsGenericTypeDefinition && !t.IsInterface)
-                            .Where(serviceOperationInterface.IsAssignableFrom);
-                    foreach (Type serviceOperationType in serviceOperationTypes)
-                    {
-                        var operationInstance = (IServiceOperation)Activator.CreateInstance(serviceOperationType);
-                        var operationType = string.Format("{0}, {1}", serviceOperationType.FullName, loadedAssembly.FullName);
-                        var operationMetaData = new OperationMetaData
-                                                    {
-                                                        Name = operationInstance.Name,
-                                                        Description = operationInstance.Description,
-                                                        OperationType = operationType,
-                                                        AssemblyPath = dll,
-                                                        Parameters = operationInstance.Parameters
-                                                    };
-                        OperationsMetaData.Add(operationMetaData);
-                    }
+                    Logger.Trace("Assembly {0} loaded", assmbly.FullName);
+                    loadedAssemblied.Add(assmbly);
                 }
 
-                AppDomain.Unload(appDomain);
-
                 impersonationContext.Undo();
+
+                Logger.Trace("Total number of loaded assembies are: {0}", loadedAssemblied.Count);
+
+                ServiceOperations = new Dictionary<Type, IServiceOperation>();
+
+                foreach (Assembly loadedAssembly in loadedAssemblied)
+                {
+                    Type[] publicTypes = loadedAssembly.GetExportedTypes();
+                    Logger.Trace(
+                        "Assembly '{0}' has {1} public types", 
+                        loadedAssembly.GetName().Name, 
+                        publicTypes.Length);
+                    foreach (Type publicType in publicTypes)
+                    {
+                        if (!publicType.IsClass || publicType.IsAbstract || publicType.IsGenericTypeDefinition
+                            || publicType.IsInterface)
+                        {
+                            continue;
+                        }
+
+                        if (!serviceOperationInterface.IsAssignableFrom(publicType))
+                        {
+                            continue;
+                        }
+
+                        var instance = (IServiceOperation)Activator.CreateInstance(publicType);
+                        ServiceOperations.Add(publicType, instance);
+                    }
+                }
             }
             catch (Exception exception)
             {
@@ -133,6 +122,16 @@ namespace Devville.DataService
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        ///     Gets the list of the available service operations.
+        /// </summary>
+        /// <value>
+        ///     The service operations.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>12/28/2014</created>
+        public static Dictionary<Type, IServiceOperation> ServiceOperations { get; private set; }
 
         /// <summary>
         ///     Gets a value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler" /> instance.
@@ -166,58 +165,41 @@ namespace Devville.DataService
         /// </exception>
         public void ProcessRequest(HttpContext context)
         {
-            WindowsImpersonationContext impersonationContext = WindowsIdentity.Impersonate(IntPtr.Zero);
-            AppDomain runnerAppDomain = AppDomain.CreateDomain("DevvilleDataServiceRunner");
-
             try
             {
-                string operationName = context.Request["op"];
+                string operationName = context.Request.QueryString["op"];
                 if (string.IsNullOrWhiteSpace(operationName))
                 {
-                    var allOperations = new JsonResponse(new { Operations = OperationsMetaData });
-                    allOperations.Render(context, true);
-                    AppDomain.Unload(runnerAppDomain);
-                    impersonationContext.Undo();
+                    var operationsList =
+                        ServiceOperations.Select(
+                            o =>
+                            new
+                                {
+                                    o.Value.Name, 
+                                    o.Value.Description, 
+                                    Class = o.Key.FullName, 
+                                    Assembly = o.Key.Assembly.FullName, 
+                                    OperationUrl = string.Format("{0}?op={1}", context.Request.Url, o.Value.Name)
+                                });
+
+                    new JsonResponse(new { Operations = operationsList }).Render(context, true);
+
                     return;
                 }
 
-                OperationMetaData operationMetaData =
-                    OperationsMetaData.FirstOrDefault(
-                        o => o.Name.Equals(operationName, StringComparison.InvariantCultureIgnoreCase));
+                List<KeyValuePair<Type, IServiceOperation>> operations =
+                    ServiceOperations.Where(
+                        o => o.Value.Name.Equals(operationName, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-                if (operationMetaData == null)
+                if (operations.Count == 0)
                 {
                     throw new IndexOutOfRangeException(string.Format("Operation {0} can't be found!", operationName));
                 }
 
-                Logger.Trace(
-                    "Operation {0} has been found with class type: {1}",
-                    operationMetaData.Name,
-                    operationMetaData.OperationType);
-                if (!File.Exists(operationMetaData.AssemblyPath))
-                {
-                    throw new FileNotFoundException("Can't find the assembly with path: ", operationMetaData.AssemblyPath);
-                }
-
-                byte[] assemblyBytes = File.ReadAllBytes(operationMetaData.AssemblyPath);
-                Assembly assembly = runnerAppDomain.Load(assemblyBytes);
-                var operationTypeName = operationMetaData.OperationType.Split(',').FirstOrDefault();
-                Type operationType = assembly.GetType(operationTypeName);
-
-                if (operationType == null)
-                {
-                    throw new InvalidOperationException(
-                        "Can't load operation of type: " + operationTypeName);
-                }
-
-                var operation = (IServiceOperation)Activator.CreateInstance(operationType);
-                Logger.Trace("Operation {0} has been loaded", operation.Name);
-                IServiceResponse serviceResponse = operation.Execute(context);
-                Logger.Trace("Operation {0} has been executed", operation.Name);
+                // Always execute the first one if there are any duplicates.
+                IServiceOperation service = operations.First().Value;
+                IServiceResponse serviceResponse = service.Execute(context);
                 serviceResponse.Render(context);
-                Logger.Trace("Operation {0} has been rendered", operation.Name);
-                AppDomain.Unload(runnerAppDomain);
-                impersonationContext.Undo();
             }
             catch (Exception exception)
             {
@@ -229,9 +211,6 @@ namespace Devville.DataService
                 var responseStatus = new JsonResponseStatus(JsonOperationStatus.Failed, exceptionString);
                 var exceptionResponse = new JsonResponse(null, responseStatus);
                 exceptionResponse.Render(context);
-
-                AppDomain.Unload(runnerAppDomain);
-                impersonationContext.Undo();
             }
         }
 
@@ -260,7 +239,7 @@ namespace Devville.DataService
 
             return exception.Data.Cast<DictionaryEntry>()
                 .Aggregate(
-                    exceptionString,
+                    exceptionString, 
                     (current, entry) => current + string.Format("{0}: {1}\n", entry.Key, entry.Value));
         }
 

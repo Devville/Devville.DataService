@@ -1,7 +1,6 @@
 ﻿namespace Devville.DataService.SharePointOperations
 {
     using System;
-    using System.Collections.Generic;
     using System.Web;
 
     using Devville.DataService.Contracts;
@@ -51,27 +50,6 @@
         }
 
         /// <summary>
-        /// Gets the parameters.
-        /// </summary>
-        /// <value>
-        /// The parameters.
-        /// </value>
-        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
-        /// <created>3/21/2015</created>
-        public Dictionary<string, string> Parameters
-        {
-            get
-            {
-                var parameters = new Dictionary<string, string>();
-                parameters["SiteUrl"] = "string: The site collection URL";
-                parameters["ListUrl"] = "string: The list URL";
-                parameters["ViewName"] = "string: The view name";
-                parameters["PageSize"] = "string: To override the view page size";
-                return parameters;
-            }
-        }
-
-        /// <summary>
         ///     Executes the current service operation.
         /// </summary>
         /// <param name="context">The context.</param>
@@ -88,7 +66,7 @@
             var listUrl = context.Request["ListUrl"];
             var viewName = context.Request["ViewName"];
             var pagingInfo = context.Request["PagingInfo"];
-            var pageSize = context.Request["PageSize"];
+            var pageSize = context.Request["PagingInfo"];
 
             if (string.IsNullOrWhiteSpace(listUrl))
             {
@@ -120,7 +98,7 @@
                 var nextPageInfo = items.ListItemCollectionPosition == null
                                        ? null
                                        : items.ListItemCollectionPosition.PagingInfo;
-                // contains the PagingInfo needed to go to the next page
+                    // contains the PagingInfo needed to go to the next page
                 var prevPageInfo = string.Format("PagePrev=True&amp;Paged=TRUE&amp;p_ID={0}", items[0].ID);
 
                 var nextPageUrl = string.IsNullOrWhiteSpace(nextPageInfo)

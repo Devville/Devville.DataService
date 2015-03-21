@@ -6,7 +6,6 @@
 namespace Devville.DataService.SharePointOperations
 {
     using System;
-    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Web;
@@ -69,31 +68,6 @@ namespace Devville.DataService.SharePointOperations
             get
             {
                 return "SPGetSiteData";
-            }
-        }
-
-        /// <summary>
-        ///     Gets the parameters.
-        /// </summary>
-        /// <value>
-        ///     The parameters.
-        /// </value>
-        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
-        /// <created>3/21/2015</created>
-        public Dictionary<string, string> Parameters
-        {
-            get
-            {
-                var parameters = new Dictionary<string, string>();
-                parameters["SiteUrl"] = "string: The site collection URL; otherwise use the current service URL.";
-                parameters["listsServerTemplate"] = "int: lists server template";
-                parameters["Query"] = "string: CAML query";
-                parameters["ViewFields"] =
-                    "string: internal field names joined by semilcolon. Example: Title;ID;CreatedBy";
-                parameters["Recursive"] = "bool: True or False if you want to get data Recursively.";
-                parameters["UseCache"] =
-                    "bool: True or False if you want to cache the data (this will be applied to all site collection data).";
-                return parameters;
             }
         }
 
