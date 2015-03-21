@@ -58,6 +58,27 @@ namespace Devville.DataService.SharePointOperations
             }
         }
 
+        /// <summary>
+        /// Gets the parameters.
+        /// </summary>
+        /// <value>
+        /// The parameters.
+        /// </value>
+        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
+        /// <created>3/21/2015</created>
+        public Dictionary<string, string> Parameters
+        {
+            get
+            {
+                var parameters = new Dictionary<string, string>();
+                parameters["TermStoreName"] = "string: The term store name; otherwise will get the default term store";
+                parameters["GroupName"] = "string: The group name.";
+                parameters["TermSetName"] = "string: The Term Set Name";
+                parameters["SiteUrl"] = "string: The site collection URL";
+                return parameters;
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -134,8 +155,8 @@ namespace Devville.DataService.SharePointOperations
             {
                 var taxonomyTerm = new TaxonomyTerm
                                        {
-                                           Id = term.Id, 
-                                           Name = term.Name, 
+                                           Id = term.Id,
+                                           Name = term.Name,
                                            Terms = this.BuildTermsTree(term.Terms)
                                        };
 

@@ -3,7 +3,6 @@
 //   Copyright © 2015 All Right Reserved
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace Devville.DataService.SharePointOperations
 {
     using System.Collections.Generic;
@@ -16,11 +15,29 @@ namespace Devville.DataService.SharePointOperations
     using Devville.Helpers;
 
     /// <summary>
-    /// The get list items partitioned.
+    ///     The get list items partitioned.
     /// </summary>
     public class GetListItemsPartitioned : IServiceOperation
     {
         #region Public Properties
+
+        /// <summary>
+        ///     Gets the description.
+        /// </summary>
+        /// <value>
+        ///     The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        public string Description
+        {
+            get
+            {
+                return
+                    "Gets SharePoint ListItems in grouped in partitions like two by two. Parameters are: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura."
+                    + Constants.OperationDescription;
+            }
+        }
 
         /// <summary>
         ///     Gets the operation name to be used in the data service.
@@ -40,19 +57,26 @@ namespace Devville.DataService.SharePointOperations
         }
 
         /// <summary>
-        /// Gets the description.
+        ///     Gets the parameters.
         /// </summary>
         /// <value>
-        /// The description.
+        ///     The parameters.
         /// </value>
-        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>2/23/2015</created>
-        public string Description
+        /// <author>Ahmed Magdy (amagdy@sure.com.sa)</author>
+        /// <created>3/21/2015</created>
+        public Dictionary<string, string> Parameters
         {
             get
             {
-                return
-                    "Gets SharePoint ListItems in grouped in partitions like two by two. Parameters are: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura." + Constants.OperationDescription;
+                var parameters = new Dictionary<string, string>();
+                parameters["SiteUrl"] = "string: The site collection URL";
+                parameters["ListUrl"] = "string: The list URL";
+                parameters["ViewName"] = "string: The view name";
+                parameters["ConvertToUmAlQura"] =
+                    "bool: True or False to convert all DateTime columns to UmAlQura calendar.";
+                parameters["PartitionSize"] =
+                    "int: The partition size. The service will split/parition the data into that parititon count/size.";
+                return parameters;
             }
         }
 
