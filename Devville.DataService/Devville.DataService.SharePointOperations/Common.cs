@@ -48,7 +48,7 @@ namespace Devville.DataService.SharePointOperations
                 throw new MissingFieldException("Can't find ListUrl parameter");
             }
 
-            siteUrl = string.IsNullOrWhiteSpace(siteUrl) ? context.Request.Url.ToString() : siteUrl;
+            siteUrl = string.IsNullOrWhiteSpace(siteUrl) ? GetSiteUrl(context) : siteUrl;
 
             using (var site = new SPSite(siteUrl))
             using (SPWeb web = site.OpenWeb())

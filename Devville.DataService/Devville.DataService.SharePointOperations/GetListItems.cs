@@ -3,21 +3,40 @@
 //   Copyright © 2015 All Right Reserved
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace Devville.DataService.SharePointOperations
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Web;
 
     using Devville.DataService.Contracts;
-    using Devville.DataService.Contracts.ServiceResponses;
+    using Devville.DataService.ServiceResponses;
 
     /// <summary>
-    /// The get list items.
+    ///     The get list items.
     /// </summary>
     public class GetListItems : IServiceOperation
     {
         #region Public Properties
+
+        /// <summary>
+        ///     Gets the description.
+        /// </summary>
+        /// <value>
+        ///     The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        /// <created>2/23/2015</created>
+        public string Description
+        {
+            get
+            {
+                return
+                    "Gets SharePoint ListItems by: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura."
+                    + Constants.OperationDescription;
+            }
+        }
 
         /// <summary>
         ///     Gets the name.
@@ -36,22 +55,26 @@ namespace Devville.DataService.SharePointOperations
         }
 
         /// <summary>
-        /// Gets the description.
+        ///     Gets the parameters.
         /// </summary>
         /// <value>
-        /// The description.
+        ///     The parameters.
         /// </value>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>2/23/2015</created>
-        /// <created>2/23/2015</created>
-        public string Description
+        /// <created>3/21/2015</created>
+        public Dictionary<string, string> Parameters
         {
             get
             {
-                return "Gets SharePoint ListItems by: 'SiteUrl', 'ListUrl' and 'ViewName'. You can 'ConvertToUmAlQura' to true if you want to have create a new date columns to UmAlQura." + Constants.OperationDescription;
+                var parameters = new Dictionary<string, string>();
+                parameters["SiteUrl"] = "string: The site collection URL";
+                parameters["ListUrl"] = "string: The list URL";
+                parameters["ViewName"] = "string: The view name";
+                parameters["ConvertToUmAlQura"] =
+                    "bool: True or False to convert all DateTime columns to UmAlQura calendar.";
+                return parameters;
             }
         }
-
 
         #endregion
 

@@ -11,7 +11,7 @@ namespace Devville.DataService.SharePointOperations
     using System.Web;
 
     using Devville.DataService.Contracts;
-    using Devville.DataService.Contracts.ServiceResponses;
+    using Devville.DataService.ServiceResponses;
     using Devville.DataService.SharePointOperations.Model;
 
     using Microsoft.SharePoint;
@@ -23,6 +23,22 @@ namespace Devville.DataService.SharePointOperations
     public class GetTaxonomyTerms : IServiceOperation
     {
         #region Public Properties
+
+        /// <summary>
+        ///     Gets the description.
+        /// </summary>
+        /// <value>
+        ///     The description.
+        /// </value>
+        /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
+        /// <created>2/23/2015</created>
+        public string Description
+        {
+            get
+            {
+                return "Get the SharePoint terms (taxonomy) in a tree format." + Constants.OperationDescription;
+            }
+        }
 
         /// <summary>
         ///     Gets the operation name to be used in the data service.
@@ -42,19 +58,23 @@ namespace Devville.DataService.SharePointOperations
         }
 
         /// <summary>
-        /// Gets the description.
+        ///     Gets the parameters.
         /// </summary>
         /// <value>
-        /// The description.
+        ///     The parameters.
         /// </value>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>2/23/2015</created>
-        public string Description
+        /// <created>3/21/2015</created>
+        public Dictionary<string, string> Parameters
         {
             get
             {
-                return
-                    "Get the SharePoint terms (taxonomy) in a tree format." + Constants.OperationDescription;
+                var parameters = new Dictionary<string, string>();
+                parameters["TermStoreName"] = "string: The term store name; otherwise will get the default term store";
+                parameters["GroupName"] = "string: The group name.";
+                parameters["TermSetName"] = "string: The Term Set Name";
+                parameters["SiteUrl"] = "string: The site collection URL";
+                return parameters;
             }
         }
 
@@ -123,8 +143,12 @@ namespace Devville.DataService.SharePointOperations
         /// <summary>
         /// Builds the terms tree.
         /// </summary>
-        /// <param name="terms">The terms.</param>
-        /// <returns>The terms tree.</returns>
+        /// <param name="terms">
+        /// The terms.
+        /// </param>
+        /// <returns>
+        /// The terms tree.
+        /// </returns>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
         /// <created>1/12/2015</created>
         private List<TaxonomyTerm> BuildTermsTree(TermCollection terms)

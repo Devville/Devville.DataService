@@ -1,34 +1,29 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Constants.cs" company="Devville">
+// <copyright file="JsonOperationStatus.cs" company="Devville">
 //   Copyright © 2015 All Right Reserved
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-namespace Devville.DataService.SharePointOperations
+namespace Devville.DataService.ServiceResponses
 {
     /// <summary>
-    ///     Constants
+    ///     Operation Status
     /// </summary>
     /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-    /// <created>2/23/2015</created>
-    public class Constants
+    /// <created>12/10/2014</created>
+    public enum JsonOperationStatus
     {
-        #region Constants
-
         /// <summary>
-        ///     The operation description
+        ///     The succeeded
         /// </summary>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>2/23/2015</created>
-        public const string OperationDescription = "The source code URL: " + SourceCodeUrl;
+        /// <created>12/10/2014</created>
+        Succeeded, 
 
         /// <summary>
-        ///     The source code URL
+        ///     The failed
         /// </summary>
         /// <author>Ahmed Magdy (ahmed.magdy@devville.net)</author>
-        /// <created>2/23/2015</created>
-        public const string SourceCodeUrl = "https://github.com/Devville/Devville.DataService";
-
-        #endregion
+        /// <created>12/10/2014</created>
+        Failed
     }
 }

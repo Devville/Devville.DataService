@@ -39,35 +39,46 @@
     <AssemblyOriginatorKeyFile>Properties\Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.3.2.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\AssemblyCommon.cs">
       <Link>Properties\AssemblyCommon.cs</Link>
     </Compile>
+    <Compile Include="Contracts\IServiceOperation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Contracts\IServiceResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceResponses\JsonOperationStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceResponses\JsonResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceResponses\JsonResponseStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataServiceHandler.cs" />
+    <Compile Include="OperationMetaData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\Key.snk" />
     <None Include="Settings.StyleCop" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Devville.DataService.Contracts\Devville.DataService.Contracts.csproj">
-      <Project>{044b2574-eaa3-46d4-a57a-4540f546a2b2}</Project>
-      <Name>Devville.DataService.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

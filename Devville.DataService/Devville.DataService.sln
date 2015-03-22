@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devville.DataService.Contracts", "Devville.DataService.Contracts\Devville.DataService.Contracts.csproj", "{044B2574-EAA3-46D4-A57A-4540F546A2B2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devville.DataService", "Devville.DataService\Devville.DataService.csproj", "{463B6AE2-7D1E-4C0F-9155-E36343BE29ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devville.DataService.SharePointOperations", "Devville.DataService.SharePointOperations\Devville.DataService.SharePointOperations.csproj", "{1625FCEA-8823-4AC7-A515-159E33AF726C}"
@@ -22,10 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{044B2574-EAA3-46D4-A57A-4540F546A2B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{044B2574-EAA3-46D4-A57A-4540F546A2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{044B2574-EAA3-46D4-A57A-4540F546A2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{044B2574-EAA3-46D4-A57A-4540F546A2B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{463B6AE2-7D1E-4C0F-9155-E36343BE29ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{463B6AE2-7D1E-4C0F-9155-E36343BE29ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{463B6AE2-7D1E-4C0F-9155-E36343BE29ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
